@@ -1,17 +1,17 @@
 package com.mstedler.loginapp.util;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
 import android.widget.Toast;
 
-import com.mstedler.loginapp.MainActivity;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 public class UIUtils {
+    private static ProgressDialog progressDialog;
 
     private UIUtils() {
 
@@ -36,5 +36,23 @@ public class UIUtils {
         builder.setOnCancelListener(cancelListener);
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    public static void showProcess(Context context, String message) {
+        closeProcess();
+        progressDialog = new ProgressDialog(context);
+        if (!message.isEmpty())
+            progressDialog.setMessage(message);
+        progressDialog.setCancelable(false);
+        if (progressDialog != null) {
+            progressDialog.show();
+        }
+    }
+
+    public static void closeProcess() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
     }
 }

@@ -4,6 +4,7 @@ import android.content.Intent;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.mstedler.loginapp.events.InvalidCredentialsEvent;
+import com.mstedler.loginapp.events.RetrofitFailureEvent;
 import com.mstedler.loginapp.events.UserLoggedInEvent;
 import com.mstedler.loginapp.pojo.LoginData;
 import com.mstedler.loginapp.services.LoginService;
@@ -70,6 +71,7 @@ public class LoginActivity extends AppCompatActivity {
         loginData.setEmail(email);
         loginData.setSenha(pass);
 
+        UIUtils.showProcess(this, "Logando...");
         loginService.doLogin(loginData);
     }
 
@@ -87,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Subscribe
     public void onUserLoggedInEvent(UserLoggedInEvent userLoggedInEvent) {
+        UIUtils.closeProcess();
         sessionManager.setLogged(true);
         Paper.book().write("user", userLoggedInEvent.getUser());
         startActivity(new Intent(this, MainActivity.class));
@@ -95,7 +98,13 @@ public class LoginActivity extends AppCompatActivity {
 
     @Subscribe
     public void onInvalidCredentialsEvent(InvalidCredentialsEvent invalidCredentialsEvent){
+        UIUtils.closeProcess();
         UIUtils.showShortMessage(this, "Login ou Senha inválidos");
+    }
+
+    @Subscribe
+    public void retrofitFailedEvent(RetrofitFailureEvent event){
+        UIUtils.closeProcess();
     }
 }
 
